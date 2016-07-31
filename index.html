@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>HERSHEY</title>
+		<style>
+
+		body{
+			background:#eee;
+		}
+
+		#font{
+			display: none;
+			position: absolute;
+		}
+
+		#fontSelect{
+			position: absolute;
+			right: 20px;
+		}
+
+		</style>
+	</head>
+
+	<script src="js/libs/jquery.js"></script>
+	<script src="js/libs/fabmo.js"></script>
+	<script type="text/javascript">
+		var fabmo = new FabMoDashboard();
+	</script>
+
+	<body onload="fontChange()">
+
+	<select id="fontSelect" onchange="fontChange()" autocomplet="on">
+		<option value='hershey/astrology.jhf'>astrology</option>
+		<option value='hershey/cursive.jhf'>cursive</option>
+		<option value='hershey/cyrilc_1.jhf'>cyrilc_1</option>
+		<option value='hershey/cyrillic.jhf'>cyrillic</option>
+		<option value='hershey/futural.jhf' selected>futural</option>
+		<option value='hershey/futuram.jhf'>futuram</option>
+		<option value='hershey/gothgbt.jhf'>gothgbt</option>
+		<option value='hershey/gothgrt.jhf'>gothgrt</option>
+		<option value='hershey/gothiceng.jhf'>gothiceng</option>
+		<option value='hershey/gothicger.jhf'>gothicger</option>
+		<option value='hershey/gothicita.jhf'>gothicita</option>
+		<option value='hershey/gothitt.jhf'>gothitt</option>
+		<option value='hershey/greek.jhf'>greek</option>
+		<option value='hershey/greekc.jhf'>greekc</option>
+		<option value='hershey/greeks.jhf'>greeks</option>
+		<option value='hershey/japanese.jhf'>japanese</option>
+		<option value='hershey/markers.jhf'>markers</option>
+		<option value='hershey/mathlow.jhf'>mathlow</option>
+		<option value='hershey/mathupp.jhf'>mathupp</option>
+		<option value='hershey/meteorology.jhf'>meteorology</option>
+		<option value='hershey/music.jhf'>music</option>
+		<option value='hershey/rowmand.jhf'>rowmand</option>
+		<option value='hershey/rowmans.jhf'>rowmans</option>
+		<option value='hershey/rowmant.jhf'>rowmant</option>
+		<option value='hershey/scriptc.jhf'>scriptc</option>
+		<option value='hershey/scripts.jhf'>scripts</option>
+		<option value='hershey/symbolic.jhf'>symbolic</option>
+		<option value='hershey/timesg.jhf'>timesi</option>
+		<option value='hershey/timesib.jhf'>timesib</option>
+		<option value='hershey/timesr.jhf'>timesr</option>
+		<option value='hershey/timesrb.jhf'>timesrb</option>
+	</select>	
+
+	<input id="font" type="file" onchange="startRead()">
+
+	<canvas id="myCanvas"></canvas>
+        
+	</body>
+
+<script>
+
+var char = []
+var glyph = []
+var jhf = []
+var mouseX = 0
+var mouseY = 0
+var sf = 1
+var k = 0
+var count = 0
+var path = []
+var vhf = []
+var pts = []
+var fileString
+
+var char = String.raw` 12JZRIPOJOOSMYRUWYUSZOTORI`
+
+function fontChange(){
+
+var hershey = document.getElementById("fontSelect").value 
+   
+jQuery.get(hershey, function(data) {
+	//console.log(data)
+	fileString = data
+})
+.done(function() {
+
+	parseFont()
+
+})
+
+
+}
+
+
+$(window).resize(function(){
+	draw()
+})
+
+$("#myCanvas").on('mousemove', function(e) {
+
+mouseX= (e.clientX-(10))
+mouseY= (e.clientY-(10))
+
+draw()
+
+})
+
+function draw(){
+
+	c = document.getElementById("myCanvas")
+	ctx = c.getContext("2d")
+
+	
+	ctx.canvas.width = $(window).innerWidth()-30
+
+
+	var ymax = Math.round(Math.ceil((path.length*70)/ctx.canvas.width )*70)
+
+	if( ($(window).innerHeight()-60) < (ymax)   ){
+		ctx.canvas.height = ymax+100
+	}
+	else{
+		ctx.canvas.height = $(window).innerHeight()-60
+	}
+	
+
+	ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height)
+	//ctx.lineJoin="round"
+	//ctx.lineCap="round"
+	ctx.lineWidth=1
+	ctx.strokeStyle="#444"
+	ctx.fillStyle="#ddd"
+
+var glyphNum = 96
+var row = 1
+
+var x = 20
+var y = 50
+pts = []
+
+for(i=0;i<path.length;i++){
+
+	pts.push({X:x+20,Y:y+20})
+
+	ctx.beginPath()
+	ctx.fillRect(x-10,y,60,40)
+	ctx.fill()
+
+	ctx.beginPath()
+	ctx.fillRect(x,y-10,40,60)
+	ctx.fill()	
+	
+	ctx.beginPath()
+	ctx.arc(x,y,10,0,(Math.PI*2))
+	ctx.fill()
+
+	ctx.beginPath()
+	ctx.arc(x+40,y,10,0,(Math.PI*2))
+	ctx.fill()
+
+	ctx.beginPath()
+	ctx.arc(x+40,y+40,10,0,(Math.PI*2))
+	ctx.fill()
+
+	ctx.beginPath()
+	ctx.arc(x,y+40,10,0,(Math.PI*2))			
+	ctx.fill()
+	
+		if(x>=ctx.canvas.width-120){
+			x=20
+			y=y+70
+		}
+		else{
+			x += 70
+		}
+}
+
+
+
+	ctx.fillStyle="#ccccff"
+	for(i=0;i<pts.length;i++){
+		if((mouseX<pts[i].X+30)&&(mouseX>=pts[i].X-30)&&(mouseY<pts[i].Y+30)&&(mouseY>=pts[i].Y-30)){
+
+	ctx.beginPath()
+	ctx.fillRect(pts[i].X-30,pts[i].Y-20,60,40)
+	ctx.fill()
+
+	ctx.beginPath()
+	ctx.fillRect(pts[i].X-20,pts[i].Y-30,40,60)
+	ctx.fill()
+
+	ctx.beginPath()
+	ctx.arc(pts[i].X-20,pts[i].Y-20,10,0,(Math.PI*2))
+	ctx.fill()
+
+	ctx.beginPath()
+	ctx.arc(pts[i].X+20,pts[i].Y-20,10,0,(Math.PI*2))
+	ctx.fill()
+
+	ctx.beginPath()
+	ctx.arc(pts[i].X-20,pts[i].Y+20,10,0,(Math.PI*2))
+	ctx.fill()
+
+	ctx.beginPath()
+	ctx.arc(pts[i].X+20,pts[i].Y+20,10,0,(Math.PI*2))			
+	ctx.fill()
+
+		}
+	}
+
+
+	x = 40
+	y = 70
+
+
+	for(i=0;i<path.length;i++){
+		
+		for(j=0;j<path[i].length;j++){
+
+			ctx.beginPath()
+			for(l=0;l<path[i][j].length;l++){
+			ctx.lineTo( parseFloat(x+(path[i][j][l].X)), parseFloat(y+(path[i][j][l].Y)) )
+			}
+			ctx.stroke()
+		}
+
+		if(x>=ctx.canvas.width-100){
+			x=40
+			y=y+70
+		}
+		else{
+			x += 70
+		}
+
+	}
+
+}
+
+
+function makeChar(){
+
+	count = parseInt(((char.charAt(0) + char.charAt(1) + char.charAt(2)))*2)
+
+	if(char.length!=count+3){
+
+	}
+
+for(i=3;i<count+3;i=i+2){
+
+	if( (i==3) || ((char.charAt(i)+char.charAt(i+1)) == "--")  ){
+		glyph.push([])
+		
+	}
+
+	else{
+
+		glyph[glyph.length-1].push({X:parseFloat((char.charAt(i).charCodeAt(0))-82),Y:parseFloat((char.charAt(i+1).charCodeAt(0))-82)})
+
+	}
+
+	
+}
+
+	path.push(glyph)	
+
+
+}
+
+
+function startRead(){  
+	var file = document.getElementById('font').files[0];
+	if(file){
+		getAsText(file);    
+	}
+}
+
+
+function getAsText(readFile){
+	var reader;
+
+	try{
+		reader = new FileReader();
+	}
+
+	catch(e){
+		console.log("Error: seems File API is not supported on your browser");
+		return;
+	  }
+   
+  reader.readAsText(readFile, "UTF-8");
+  reader.onload = loaded;
+  reader.onerror = errorHandler;
+}
+
+function loaded(e){   
+
+	fileString = e.target.result;
+
+	parseFont()
+
+}
+
+function parseFont(){
+
+
+	fileString = fileString.replace( /\n/g, '' )
+	fileString = fileString.replace( /(\b\d{5}\b|\s\b\d{4}\b|\s{2}\b\d{3}\b)/g,"12345" ) //"12345 "
+	fileString = fileString.replace( /\sR/g,"--" )
+
+	vhf = fileString.split('12345')
+	
+	for(i=0;i<vhf.length;i++){
+		if(vhf[i].length<=7){
+			vhf.splice(i,1)
+			i--
+		}
+	}
+
+
+	yo = 0-($(window).innerHeight()/2)+100
+	xo = 0-($(window).innerWidth()/2)+100
+	row=0
+	glyph = []
+	line = 0
+	path = []
+
+
+	for(k=0;k<vhf.length;k++){		
+
+	char = vhf[k]
+
+	glyph = []
+
+
+	if(k==0){
+
+	}
+	else{
+		xo = xo+50
+	}
+
+	makeChar()
+	
+	}
+
+	draw()
+
+}
+
+function errorHandler(e)
+{
+  if(e.target.error.code == e.target.error.NOT_READABLE_ERR)
+	{
+		console.log("Error reading file...")
+  }
+}
+
+</script>
+
+</html>
+
+
