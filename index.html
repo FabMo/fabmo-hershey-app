@@ -16,9 +16,23 @@
 
 		#fontSelect{
 			position: absolute;
-			right: 10%;
+			right: 80px;
 			height:35px;
 		}
+
+		#space{
+			position: absolute;
+			left: 10px;
+			height:35px;
+		}
+
+		#enter{
+			position: absolute;
+			right: 280px;
+			height:35px;
+		}
+
+
 
 
 		</style>
@@ -70,6 +84,9 @@
 
 	<input id="fontLoad" type="file" onchange="startRead()">
 
+	<input id="space" type="submit" value="SPACE" onclick="space()">
+	<input id="enter" type="submit" value="RETURN" onclick="enter()">
+
 	<canvas id="myCanvas"></canvas>
         
 	</body>
@@ -90,7 +107,11 @@ var k = 0
 var count = 0
 var selected = -1 
 var xmax = 0
-var xmin = 0 
+var xmin = 0
+var SBP
+var sf = 1
+var cutDepth = "-0.005"
+var lineX = 0 
 
 var char = String.raw` 12JZRIPOJOOSMYRUWYUSZOTORI`
 
@@ -268,7 +289,7 @@ for(i=3;i<count+3;i=i+2){
 
 	
 
-	console.log(path)	
+	//console.log(path)	
 }
 
 function startRead(){  
@@ -359,13 +380,13 @@ function makeSBP(g){
 hershey = hershey.replace('hershey/','')
 hershey = hershey.replace('.jhf','')
 
-var sf = 1
-var SBP = ""
-var cutDepth = "-0.005"
+SBP = ""
+
+lineX += parseFloat(((Math.abs(g[0][0].L))*0.0394*sf).toFixed(4))
 
 SBP+="MS," + 0.4 + "," + 0.2 + "\n"
 SBP+="JZ,0.1\n"
-SBP+="JX," + (((Math.abs(g[0][0].L)+0.0394)*0.0394*sf).toFixed(4)) + "\n"
+SBP+="JX," + (((Math.abs(g[0][0].L))*0.0394*sf).toFixed(4)) + "\n"
 SBP+="ZX\n"
 SBP+="SO,1,1\n"
 SBP+="PAUSE 1\n" 
@@ -383,20 +404,45 @@ for(i=0;i<g.length;i++){
 
 SBP+="JZ,0.5\n"
 SBP+="SO,1,0\n"
-SBP+="JX," + (((Math.abs(g[0][0].R)+0.0394)*0.0394*sf).toFixed(4)) + "\n"
+lineX += parseFloat(((Math.abs(g[0][0].R))*0.0394*sf).toFixed(4))
+SBP+="J2," + (((Math.abs(g[0][0].R))*0.0394*sf).toFixed(4)) + "," + ((0.35*sf).toFixed(4)) + "\n"
 //SBP+="J2," + ((0.7*sf).toFixed(4)) + ",0\n"
 SBP+="ZX\n"
 
+
+fabmo.runSBP(SBP)
+
+/*
 fabmo.submitJob({
    file : SBP,
    filename : hershey + "_" + hershey + (selected+1) +'.sbp',
    name : 'Hershey Font: ' + hershey + ' glyph# ' + (selected+1),
 	description : 'cut depth = ' + cutDepth + '\"'   
 });
+*/
 
 
 selected = -1
 
+}
+
+function space(){
+	SBP = ""
+	SBP +="JZ,0.5\n"
+	lineX += parseFloat(0.65*sf)
+	SBP +="JX," + (0.65*sf) + "\n"
+	SBP +="ZX\n"
+	fabmo.runSBP(SBP)
+}
+
+function enter(){
+
+	SBP = ""
+	SBP +="JZ,0.5\n"
+	SBP +="J2," + ((0-lineX).toFixed(4)) + "," + (-0.65*sf) + "\n"
+	SBP+="Z2\n"
+	fabmo.runSBP(SBP)
+	lineX = 0
 }
 
 </script>
