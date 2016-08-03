@@ -11,30 +11,61 @@
 
 		#fontLoad{
 			display: none;
+			left: 39%;
 			position: absolute;
 		}
 
 		#fontSelect{
-			position: absolute;
-			right: 80px;
+			-webkit-appearance: none;
+			-moz-appearance: none;
+			appearance: none;
+			position: fixed;
+			left: 20px;
 			height:35px;
+			background-color: #ddd;
+			border: solid 2px #eee;
+			overflow: hidden;
+   		border-radius: 10px;
+			padding-left:10px;
+			padding-right:10px;
+
+		}
+		#fontSelect:hover {
+			background-color: #fff;
 		}
 
 		#space{
-			position: absolute;
-			left: 10px;
+			position: fixed;
+			left: 30%;
+			bottom: 10px;
 			height:35px;
+			width:30%;
+			background-color: #ddd;
+   		border-radius: 10px;
+			border: solid 2px #eee;
 		}
-
+		#space:hover {
+			background-color: #fff;
+		}
+		#space:active {
+			background-color: #ccc;
+		}
 		#enter{
-			position: absolute;
-			right: 280px;
-			height:35px;
+			position: fixed;
+			right: 10px;
+			bottom: 50%;
+			height:70px;
+			width:60px;
+   		border-radius: 10px;
+			background-color: #ddd;
+			border: solid 2px #eee;
 		}
-
-
-
-
+		#enter:hover {
+			background-color: #fff;
+		}
+		#enter:active {
+			background-color: #ccc;
+		}
 		</style>
 	</head>
 
@@ -45,7 +76,7 @@
 	</script>
 
 	<!--<body onload="makeChar(); draw();">-->
-	<body onload="fontChange();">
+	<body onload="fontChange(); fabmo.runSBP('Z2\n');">
 
 	<select id="fontSelect" onchange="fontChange()" autocomplet="on">
 		<option value='hershey/astrology.jhf'>astrology</option>
@@ -81,11 +112,10 @@
 		<option value='hershey/timesrb.jhf'>timesrb</option>
 	</select>	
 
-
 	<input id="fontLoad" type="file" onchange="startRead()">
 
 	<input id="space" type="submit" value="SPACE" onclick="space()">
-	<input id="enter" type="submit" value="RETURN" onclick="enter()">
+	<input id="enter" type="submit" value="&#9166;" onclick="enter()">
 
 	<canvas id="myCanvas"></canvas>
         
@@ -109,9 +139,18 @@ var selected = -1
 var xmax = 0
 var xmin = 0
 var SBP
-var sf = 1
-var cutDepth = "-0.005"
+
 var lineX = 0 
+var lineY = 0
+
+var cutDepth = "-0.005"
+var sf = 0.3
+
+//TODO
+//
+//remove "Z" commands
+//string + submit
+//
 
 var char = String.raw` 12JZRIPOJOOSMYRUWYUSZOTORI`
 
@@ -162,12 +201,12 @@ function draw(){
 	c = document.getElementById("myCanvas")
 	ctx = c.getContext("2d")
 
-	ctx.canvas.width = $(window).innerWidth()-30
+	ctx.canvas.width = $(window).innerWidth()-70
 
-	var ymax = Math.round(Math.ceil((path.length*70)/ctx.canvas.width )*70)
+	var ymax = Math.round((Math.ceil((path.length*70)/ctx.canvas.width )*70)+70)
 
-	if( ($(window).innerHeight()-70) < (ymax+70)   ){
-		ctx.canvas.height = ymax+30
+	if( ($(window).innerHeight()-70) < (ymax)   ){
+		ctx.canvas.height = ymax+70
 	}
 	else{
 		ctx.canvas.height = $(window).innerHeight()-70
@@ -228,12 +267,12 @@ function draw(){
 	ctx.arc(x,y+40,10,0,(Math.PI*2))			
 	ctx.fill()
 	
-		if(x>=ctx.canvas.width-120){
+		if(x>=ctx.canvas.width-130){
 			x=20
-			y=y+70
+			y+=70
 		}
 		else{
-			x += 70
+			x+=70
 		}
 	}
 
@@ -250,12 +289,12 @@ function draw(){
 			ctx.stroke()
 		}
 
-		if(x>=ctx.canvas.width-100){
+		if(x>=ctx.canvas.width-110){
 			x=40
-			y=y+70
+			y+=70
 		}
 		else{
-			x += 70
+			x+=70
 		}
 	}
 }
@@ -264,69 +303,62 @@ function draw(){
 function makeChar(){
 
 	count = parseInt(((char.charAt(0) + char.charAt(1) + char.charAt(2)))*2)
+
 	if(char.length!=count+3){
-
+		//console.log(char)
 	}
-	//console.log(char)
 
+	for(i=3;i<count+3;i=i+2){
 
-for(i=3;i<count+3;i=i+2){
-
-	if( (i==3) || ((char.charAt(i)+char.charAt(i+1)) == "--")  ){
-		glyph.push([])		
-	}
-	else{
-		if(i==5){
-		glyph[glyph.length-1].push({X:parseFloat((char.charAt(i).charCodeAt(0))-82),Y:parseFloat((char.charAt(i+1).charCodeAt(0))-82),L:(parseFloat((char.charAt(3).charCodeAt(0))-82)),R:(parseFloat((char.charAt(4).charCodeAt(0))-82))})
-
+		if( (i==3) || ((char.charAt(i)+char.charAt(i+1)) == "--")  ){
+			glyph.push([])		
 		}
 		else{
-		glyph[glyph.length-1].push({X:parseFloat((char.charAt(i).charCodeAt(0))-82),Y:parseFloat((char.charAt(i+1).charCodeAt(0))-82)})
+			if(i==5){
+				glyph[glyph.length-1].push({X:parseFloat((char.charAt(i).charCodeAt(0))-82),Y:parseFloat((char.charAt(i+1).charCodeAt(0))-82),L:(parseFloat((char.charAt(3).charCodeAt(0))-82)),R:(parseFloat((char.charAt(4).charCodeAt(0))-82))})
+			}
+			else{
+				glyph[glyph.length-1].push({X:parseFloat((char.charAt(i).charCodeAt(0))-82),Y:parseFloat((char.charAt(i+1).charCodeAt(0))-82)})
+			}
 		}
 	}
-}
 	path.push(glyph)
-
-	
-
 	//console.log(path)	
 }
 
 function startRead(){  
 	var file = document.getElementById('fontLoad').files[0];
 	if(file){
-		getAsText(file);    
+		getAsText(file)    
 	}
 }
 
 function getAsText(readFile){
-	var reader;
+	var reader
 
 	try{
-		reader = new FileReader();
+		reader = new FileReader()
 	}
 
 	catch(e){
-		console.log("Error: seems File API is not supported on your browser");
+		console.log("Error: seems File API is not supported on your browser")
 		return;
 	  }
    
-  reader.readAsText(readFile, "UTF-8");
+  reader.readAsText(readFile, "UTF-8")
   reader.onload = loaded;
   reader.onerror = errorHandler;
 }
 
 function loaded(e){   
-
 	fileString = e.target.result;
 	parseFont()
-
 }
 
 function parseFont(){
 
 	fileString = fileString.replace( /\n/g, '' )
-	fileString = fileString.replace( /(\b\d{5}\b|\s\b\d{4}\b|\s{2}\b\d{3}\b)/g,"12345" ) //"12345 "
+	fileString = fileString.replace( /(\b\d{5}\b|\s\b\d{4}\b|\s{2}\b\d{3}\b)/g,"12345" )
 	fileString = fileString.replace( /\sR/g,"--" )
 
 	vhf = fileString.split('12345')
@@ -342,23 +374,21 @@ function parseFont(){
 	xo = 0-($(window).innerWidth()/2)+100
 	row=0
 	glyph = []
-	line = 0
 	path = []
 
 	for(k=0;k<vhf.length;k++){		
 
-	char = vhf[k]
+		char = vhf[k]
+		glyph = []
 
-	glyph = []
+		if(k==0){
 
-	if(k==0){
+		}
+		else{
+			xo += 50
+		}
 
-	}
-	else{
-		xo = xo+50
-	}
-
-	makeChar()
+		makeChar()
 	
 	}
 
@@ -376,49 +406,42 @@ function errorHandler(e)
 
 function makeSBP(g){
 
+	hershey = hershey.replace('hershey/','')
+	hershey = hershey.replace('.jhf','')
 
-hershey = hershey.replace('hershey/','')
-hershey = hershey.replace('.jhf','')
+	SBP = ""
 
-SBP = ""
+	lineX += parseFloat(((Math.abs(g[0][0].L))*0.0394*sf).toFixed(4))
 
-lineX += parseFloat(((Math.abs(g[0][0].L))*0.0394*sf).toFixed(4))
+	SBP+="MS," + 0.4 + "," + 0.2 + "\n"
+	SBP+="JZ,0.1\n"
+	SBP+="JX," + (lineX) + "\n"
+	SBP+="SO,1,1\n"
+	SBP+="PAUSE 1\n" 
 
-SBP+="MS," + 0.4 + "," + 0.2 + "\n"
-SBP+="JZ,0.1\n"
-SBP+="JX," + (((Math.abs(g[0][0].L))*0.0394*sf).toFixed(4)) + "\n"
-SBP+="ZX\n"
-SBP+="SO,1,1\n"
-SBP+="PAUSE 1\n" 
-
-for(i=0;i<g.length;i++){
-
-	SBP+="J2," + ((g[i][0].X*0.0394*sf).toFixed(4)) + "," + ((0-(g[i][0].Y*0.0394*sf)).toFixed(4)) + "\n"
-	SBP+="MZ,"+cutDepth+"\n"
-	for(j=1;j<g[i].length;j++){
-		SBP+="M2," + ((g[i][j].X*0.0394*sf).toFixed(4)) + "," + ((0-(g[i][j].Y*0.0394*sf)).toFixed(4)) + "\n"
+	for(i=0;i<g.length;i++){
+		SBP+="J2," + ((lineX+(g[i][0].X*0.0394*sf)).toFixed(4)) + "," + (((-lineY)+(0-(g[i][0].Y*0.0394*sf))).toFixed(4)) + "\n"
+		SBP+="MZ,"+cutDepth+"\n"
+		for(j=1;j<g[i].length;j++){
+			SBP+="M2," + ((lineX+(g[i][j].X*0.0394*sf)).toFixed(4)) + "," + (((-lineY)+(0-(g[i][j].Y*0.0394*sf))).toFixed(4)) + "\n"
+		}
+		SBP+="JZ,0.05\n"
 	}
-	SBP+="JZ,0.05\n"
 
-}
+	SBP+="JZ,0.5\n"
+	SBP+="SO,1,0\n"
+	lineX += parseFloat(((Math.abs(g[0][0].R))*0.0394*sf).toFixed(4))
+	SBP+="J2," + (lineX) + "," + (((-lineY)+(sf)).toFixed(4)) + "\n"
 
-SBP+="JZ,0.5\n"
-SBP+="SO,1,0\n"
-lineX += parseFloat(((Math.abs(g[0][0].R))*0.0394*sf).toFixed(4))
-SBP+="J2," + (((Math.abs(g[0][0].R))*0.0394*sf).toFixed(4)) + "," + ((0.5*sf).toFixed(4)) + "\n"
-//SBP+="J2," + ((0.7*sf).toFixed(4)) + ",0\n"
-SBP+="ZX\n"
-
-
-fabmo.runSBP(SBP)
+	fabmo.runSBP(SBP)
 
 /*
-fabmo.submitJob({
-   file : SBP,
-   filename : hershey + "_" + hershey + (selected+1) +'.sbp',
-   name : 'Hershey Font: ' + hershey + ' glyph# ' + (selected+1),
-	description : 'cut depth = ' + cutDepth + '\"'   
-});
+	fabmo.submitJob({
+	   file : SBP,
+	   filename : hershey + "_" + hershey + (selected+1) +'.sbp',
+	   name : 'Hershey Font: ' + hershey + ' glyph# ' + (selected+1),
+		description : 'cut depth = ' + cutDepth + '\"'   
+	});
 */
 
 
@@ -430,29 +453,20 @@ function space(){
 	SBP = ""
 	SBP +="JZ,0.5\n"
 	lineX += parseFloat(0.65*sf)
-	SBP +="JX," + (0.65*sf) + "\n"
-	SBP +="ZX\n"
+	SBP +="JX," + ((lineX).toFixed(4)) + "\n"
 	fabmo.runSBP(SBP)
 }
 
 function enter(){
-
 	SBP = ""
 	SBP +="JZ,0.5\n"
-	SBP +="J2," + ((0-lineX).toFixed(4)) + "," + (-0.65*sf) + "\n"
-	SBP+="Z2\n"
+	lineY += parseFloat(sf) 
+	SBP +="J2," + (0) + "," + ((0-lineY).toFixed(4)) + "\n"
+	//SBP+="ZY\n"
 	fabmo.runSBP(SBP)
 	lineX = 0
 }
 
-function tab(){
-	SBP = ""
-	SBP +="JZ,0.5\n"
-	lineX += parseFloat(0.65*3*sf)
-	SBP +="JX," + (0.65*3*sf) + "\n"
-	SBP +="ZX\n"
-	fabmo.runSBP(SBP)
-}
 
 </script>
 
