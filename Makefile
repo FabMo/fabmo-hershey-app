@@ -1,5 +1,5 @@
-fabmo-hershey-app.fma: clean *.html js/* js/libs/*.js hershey/* icon.png package.json
-	zip fabmo-hershey-app.fma *.html js/* js/libs/*.js hershey/* icon.png package.json
+fabmo-hershey-app.fma: clean *.png *.html js/* js/libs/*.js hershey/* css/* icon.png package.json
+	zip fabmo-hershey-app.fma *.png *.html js/* js/libs/*.js hershey/* css/* icon.png package.json
 
 .PHONY: clean
 

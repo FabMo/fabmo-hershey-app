@@ -3,80 +3,20 @@
 	<head>
 		<meta charset="utf-8">
 		<title>HERSHEY FONTS</title>
-		<style>
-
-		body{
-			background:#eee;
-		}
-
-		#fontLoad{
-			display: none;
-			left: 39%;
-			position: absolute;
-		}
-
-		#fontSelect{
-			-webkit-appearance: none;
-			-moz-appearance: none;
-			appearance: none;
-			position: fixed;
-			left: 20px;
-			height:35px;
-			background-color: #ddd;
-			border: solid 2px #eee;
-			overflow: hidden;
-   		border-radius: 10px;
-			padding-left:10px;
-			padding-right:10px;
-
-		}
-		#fontSelect:hover {
-			background-color: #fff;
-		}
-
-		#space{
-			position: fixed;
-			left: 30%;
-			bottom: 10px;
-			height:35px;
-			width:30%;
-			background-color: #ddd;
-   		border-radius: 10px;
-			border: solid 2px #eee;
-		}
-		#space:hover {
-			background-color: #fff;
-		}
-		#space:active {
-			background-color: #ccc;
-		}
-		#enter{
-			position: fixed;
-			right: 10px;
-			bottom: 50%;
-			height:70px;
-			width:60px;
-   		border-radius: 10px;
-			background-color: #ddd;
-			border: solid 2px #eee;
-		}
-		#enter:hover {
-			background-color: #fff;
-		}
-		#enter:active {
-			background-color: #ccc;
-		}
-		</style>
 	</head>
 
+	<link href="css/style.css" rel="stylesheet">
 	<script src="js/libs/jquery.js"></script>
 	<script src="js/libs/fabmo.js"></script>
 	<script type="text/javascript">
 		var fabmo = new FabMoDashboard();
 	</script>
+	<script src="js/make.js"></script>
+	<script src="js/draw.js"></script>
+	<script src="js/loadfont.js"></script>
+	<script src="js/hershey.js"></script>
 
-	<!--<body onload="makeChar(); draw();">-->
-	<body onload="fontChange(); fabmo.runSBP('Z2\n');">
+	<body onload="makeChar(); draw(); fontChange(); fabmo.runSBP('Z2\n');">
 
 	<select id="fontSelect" onchange="fontChange()" autocomplet="on">
 		<option value='hershey/astrology.jhf'>astrology</option>
@@ -114,359 +54,59 @@
 
 	<input id="fontLoad" type="file" onchange="startRead()">
 
-	<input id="space" type="submit" value="SPACE" onclick="space()">
+	<input id="size" type="number" value="0.3" step="0.1" min="0.2">
+	<input id="space" type="submit" value="Space" onclick="space()">
 	<input id="enter" type="submit" value="&#9166;" onclick="enter()">
+	<input id="submit" type="submit" value="SUBMIT" onclick="make()">
+	<input id="backspace" type="submit" value="&#8678;" onclick="backspace()">
+
+	<img class="trash-icon" src="trash.png">
 
 	<canvas id="myCanvas"></canvas>
+	<canvas id="paper"></canvas>
         
 	</body>
 
 <script>
 
-var char = []
-var glyph = []
-var jhf = []
-var path = []
-var vhf = []
-var fileString
-var hershey = "star"
-var mouseDown = false
-var mouseX = 0
-var mouseY = 0
-var k = 0
-var count = 0
-var selected = -1 
-var xmax = 0
-var xmin = 0
-var SBP
-
-var lineX = 0 
-var lineY = 0
-
-var cutDepth = "-0.005"
-var sf = 0.3
-
 //TODO
 //
-//remove "Z" commands
-//string + submit
-//
-
-var char = String.raw` 12JZRIPOJOOSMYRUWYUSZOTORI`
-
-function fontChange(){
-
-	hershey = document.getElementById("fontSelect").value 
-
-	jQuery.get(hershey, function(data) {
-		fileString = data
-	})
-	.done(function() {
-		parseFont()
-	})
-}
-
-$(window).resize(function(){
-	draw()
-})
+//return
+//mode toggle
+//submit job
 
 $("#myCanvas").on('mousemove', function(e) {
-
-		mouseX= (e.clientX-(10))
-		mouseY= (e.clientY-(10))+(Math.max(document.documentElement.scrollTop,document.body.scrollTop))
-		draw()
-
+	mouseX= (e.clientX-(10))
+	mouseY= (e.clientY-(10))+(Math.max(document.documentElement.scrollTop,document.body.scrollTop))
+	draw()
 })
 
 $("#myCanvas").on('mousedown', function(e) {
 	//e.preventDefault()
 	mouseDown = true
 	draw()
-
 })
 
 $("#myCanvas").on('mouseup', function(e) {
 	//e.preventDefault()
 	mouseDown = false
 	draw()
-
 	if(selected!=-1){
-		makeSBP(path[selected])
+		if (mode==1){
+			displayTxt(path[selected])
+		}
+		else{
+			makeSBP(path[selected])
+		}
+		selected = -1
 	}
-
 })
 
-function draw(){
-
-	c = document.getElementById("myCanvas")
-	ctx = c.getContext("2d")
-
-	ctx.canvas.width = $(window).innerWidth()-70
-
-	var ymax = Math.round((Math.ceil((path.length*70)/ctx.canvas.width )*70)+70)
-
-	if( ($(window).innerHeight()-70) < (ymax)   ){
-		ctx.canvas.height = ymax+70
-	}
-	else{
-		ctx.canvas.height = $(window).innerHeight()-70
-	}
-	
-	ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height)
-	//ctx.lineJoin="round"
-	//ctx.lineCap="round"
-	ctx.lineWidth=1
-	ctx.strokeStyle="#444"
-	ctx.fillStyle="#ddd"
-
-	var glyphNum = 96
-	var row = 1
-
-	var x = 20
-	var y = 50
-
-	for(i=0;i<path.length;i++){
-
-	ctx.beginPath()
-
-	if((mouseX<x+50)&&(mouseX>=x-10)&&(mouseY<y+50)&&(mouseY>=y-10)){
-		if(mouseDown==true){
-			ctx.fillStyle="#ccc"
-			selected = i
-		}
-		else{
-			ctx.fillStyle="#fff"
-			//selected = -1
-		}
-	}
-	else{
-		ctx.fillStyle="#ddd"
-	}
-
-
-	ctx.fillRect(x-10,y,60,40)
-	ctx.fill()
-
-	ctx.beginPath()
-	ctx.fillRect(x,y-10,40,60)
-	ctx.fill()	
-	
-	ctx.beginPath()
-	ctx.arc(x,y,10,0,(Math.PI*2))
-	ctx.fill()
-
-	ctx.beginPath()
-	ctx.arc(x+40,y,10,0,(Math.PI*2))
-	ctx.fill()
-
-	ctx.beginPath()
-	ctx.arc(x+40,y+40,10,0,(Math.PI*2))
-	ctx.fill()
-
-	ctx.beginPath()
-	ctx.arc(x,y+40,10,0,(Math.PI*2))			
-	ctx.fill()
-	
-		if(x>=ctx.canvas.width-130){
-			x=20
-			y+=70
-		}
-		else{
-			x+=70
-		}
-	}
-
-
-	x = 40
-	y = 70
-
-	for(i=0;i<path.length;i++){		
-		for(j=0;j<path[i].length;j++){
-			ctx.beginPath()
-			for(l=0;l<path[i][j].length;l++){
-			ctx.lineTo( parseFloat(x+(path[i][j][l].X)), parseFloat(y+(path[i][j][l].Y)) )
-			}
-			ctx.stroke()
-		}
-
-		if(x>=ctx.canvas.width-110){
-			x=40
-			y+=70
-		}
-		else{
-			x+=70
-		}
-	}
-}
-
-
-function makeChar(){
-
-	count = parseInt(((char.charAt(0) + char.charAt(1) + char.charAt(2)))*2)
-
-	if(char.length!=count+3){
-		//console.log(char)
-	}
-
-	for(i=3;i<count+3;i=i+2){
-
-		if( (i==3) || ((char.charAt(i)+char.charAt(i+1)) == "--")  ){
-			glyph.push([])		
-		}
-		else{
-			if(i==5){
-				glyph[glyph.length-1].push({X:parseFloat((char.charAt(i).charCodeAt(0))-82),Y:parseFloat((char.charAt(i+1).charCodeAt(0))-82),L:(parseFloat((char.charAt(3).charCodeAt(0))-82)),R:(parseFloat((char.charAt(4).charCodeAt(0))-82))})
-			}
-			else{
-				glyph[glyph.length-1].push({X:parseFloat((char.charAt(i).charCodeAt(0))-82),Y:parseFloat((char.charAt(i+1).charCodeAt(0))-82)})
-			}
-		}
-	}
-	path.push(glyph)
-	//console.log(path)	
-}
-
-function startRead(){  
-	var file = document.getElementById('fontLoad').files[0];
-	if(file){
-		getAsText(file)    
-	}
-}
-
-function getAsText(readFile){
-	var reader
-
-	try{
-		reader = new FileReader()
-	}
-
-	catch(e){
-		console.log("Error: seems File API is not supported on your browser")
-		return;
-	  }
-   
-  reader.readAsText(readFile, "UTF-8")
-  reader.onload = loaded;
-  reader.onerror = errorHandler;
-}
-
-function loaded(e){   
-	fileString = e.target.result;
-	parseFont()
-}
-
-function parseFont(){
-
-	fileString = fileString.replace( /\n/g, '' )
-	fileString = fileString.replace( /(\b\d{5}\b|\s\b\d{4}\b|\s{2}\b\d{3}\b)/g,"12345" )
-	fileString = fileString.replace( /\sR/g,"--" )
-
-	vhf = fileString.split('12345')
-	
-	for(i=0;i<vhf.length;i++){
-		if(vhf[i].length<=7){
-			vhf.splice(i,1)
-			i--
-		}
-	}
-
-	yo = 0-($(window).innerHeight()/2)+100
-	xo = 0-($(window).innerWidth()/2)+100
-	row=0
-	glyph = []
-	path = []
-
-	for(k=0;k<vhf.length;k++){		
-
-		char = vhf[k]
-		glyph = []
-
-		if(k==0){
-
-		}
-		else{
-			xo += 50
-		}
-
-		makeChar()
-	
-	}
-
+$('.trash-icon').click(function(){
+	display = []
+	screenY=(70*displayScale)
 	draw()
-
-}
-
-function errorHandler(e)
-{
-  if(e.target.error.code == e.target.error.NOT_READABLE_ERR)
-	{
-		console.log("Error reading file...")
-  }
-}
-
-function makeSBP(g){
-
-	hershey = hershey.replace('hershey/','')
-	hershey = hershey.replace('.jhf','')
-
-	SBP = ""
-
-	lineX += parseFloat(((Math.abs(g[0][0].L))*0.0394*sf).toFixed(4))
-
-	SBP+="MS," + 0.4 + "," + 0.2 + "\n"
-	SBP+="JZ,0.1\n"
-	SBP+="JX," + (lineX) + "\n"
-	SBP+="SO,1,1\n"
-	SBP+="PAUSE 1\n" 
-
-	for(i=0;i<g.length;i++){
-		SBP+="J2," + ((lineX+(g[i][0].X*0.0394*sf)).toFixed(4)) + "," + (((-lineY)+(0-(g[i][0].Y*0.0394*sf))).toFixed(4)) + "\n"
-		SBP+="MZ,"+cutDepth+"\n"
-		for(j=1;j<g[i].length;j++){
-			SBP+="M2," + ((lineX+(g[i][j].X*0.0394*sf)).toFixed(4)) + "," + (((-lineY)+(0-(g[i][j].Y*0.0394*sf))).toFixed(4)) + "\n"
-		}
-		SBP+="JZ,0.05\n"
-	}
-
-	SBP+="JZ,0.5\n"
-	SBP+="SO,1,0\n"
-	lineX += parseFloat(((Math.abs(g[0][0].R))*0.0394*sf).toFixed(4))
-	SBP+="J2," + (lineX) + "," + (((-lineY)+(sf)).toFixed(4)) + "\n"
-
-	fabmo.runSBP(SBP)
-
-/*
-	fabmo.submitJob({
-	   file : SBP,
-	   filename : hershey + "_" + hershey + (selected+1) +'.sbp',
-	   name : 'Hershey Font: ' + hershey + ' glyph# ' + (selected+1),
-		description : 'cut depth = ' + cutDepth + '\"'   
-	});
-*/
-
-
-selected = -1
-
-}
-
-function space(){
-	SBP = ""
-	SBP +="JZ,0.5\n"
-	lineX += parseFloat(0.65*sf)
-	SBP +="JX," + ((lineX).toFixed(4)) + "\n"
-	fabmo.runSBP(SBP)
-}
-
-function enter(){
-	SBP = ""
-	SBP +="JZ,0.5\n"
-	lineY += parseFloat(sf) 
-	SBP +="J2," + (0) + "," + ((0-lineY).toFixed(4)) + "\n"
-	//SBP+="ZY\n"
-	fabmo.runSBP(SBP)
-	lineX = 0
-}
-
+})
 
 </script>
 
