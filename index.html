@@ -16,7 +16,7 @@
 	<script src="js/loadfont.js"></script>
 	<script src="js/hershey.js"></script>
 
-	<body onload="makeChar(); draw(); fontChange(); fabmo.runSBP('Z2\n');">
+	<body onload="makeChar(); draw(); fontChange();">
 
 	<select id="fontSelect" onchange="fontChange()" autocomplet="on">
 		<option value='hershey/astrology.jhf'>astrology</option>
@@ -60,6 +60,13 @@
 	<input id="submit" type="submit" value="SUBMIT" onclick="make()">
 	<input id="backspace" type="submit" value="&#8678;" onclick="backspace()">
 
+	<select id="toggle" onchange="modeChange()" autocomplet="off">
+		<option value='1'>demo</option>
+		<option value='1' selected>submit</option>
+		<option value='0'>type</option>
+	</select>	
+
+
 	<img class="trash-icon" src="trash.png">
 
 	<canvas id="myCanvas"></canvas>
@@ -102,7 +109,7 @@ $("#myCanvas").on('mouseup', function(e) {
 	}
 })
 
-$('.trash-icon').click(function(){
+$('trash-icon').click(function(){
 	display = []
 	screenY=(70*displayScale)
 	draw()

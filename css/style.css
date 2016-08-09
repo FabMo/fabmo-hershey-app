@@ -12,7 +12,6 @@ body{
 	}
 
 #fontLoad{
-	display: none;
 	bottom: 10px;
 	position: fixed;
 	}
@@ -25,6 +24,7 @@ body{
 	top:3px;
 	left: 20px;
 	height:35px;
+	width:100px;
 	background-color: #ddd;
 	border: solid 2px #eee;
 	overflow: hidden;
@@ -49,10 +49,29 @@ body{
 	background-color: #ddd;
 	border: solid 2px #eee;
 	border-radius: 10px;
-	padding-left:10px;;
+	padding-left:10px;
 	}
 
 #size:hover {
+	background-color: #fff;
+	}
+
+#toggle{
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	position: fixed;
+	top: 3px;
+	left: 230px;
+	height:35px;
+	background-color: #ddd;
+	border: solid 2px #eee;
+	border-radius: 10px;
+	padding-left:10px;
+	padding-right:10px;
+	}
+
+#toggle:hover {
 	background-color: #fff;
 	}
 

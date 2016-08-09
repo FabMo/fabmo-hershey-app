@@ -18,7 +18,7 @@
 			lineX += parseFloat(((Math.abs(g[0][0].L))*0.0394*sf).toFixed(4))
 
 				SBP+="MS," + 0.4 + "," + 0.2 + "\n"
-				SBP+="JZ,0.1\n"
+				SBP+="JZ,0.5\n"
 				SBP+="JX," + (lineX) + "\n"
 				SBP+="SO,1,1\n"
 				SBP+="PAUSE 1\n" 
@@ -35,14 +35,14 @@
 			SBP+="JZ,0.5\n"
 			SBP+="SO,1,0\n"
 			lineX += parseFloat(((Math.abs(g[0][0].R))*0.0394*sf).toFixed(4))
-			SBP+="J2," + (lineX) + "," + (((-lineY)+(sf)).toFixed(4)) + "\n"
+			SBP+="J2," + (lineX) + "," + ((parseFloat(sf)).toFixed(4)) + "\n"
 			fabmo.runSBP(SBP)
 
 			}
 			else if(mode == 1){
 
 				SBP+="MS," + 0.4 + "," + 0.2 + "\n"
-				SBP+="JZ,0.1\n"
+				SBP+="JZ,0.5\n"
 				SBP+="SO,1,1\n"
 				SBP+="PAUSE 1\n" 
 				lineY = 0
@@ -76,20 +76,18 @@
 			
 	}
 
-			}
-
-			SBP+="JZ,0.5\n"
-			SBP+="SO,1,0\n"
-			SBP+="JY," + parseFloat(0.5*sf) + "\n"
-			//console.log(SBP)
+				SBP+="JZ,0.5\n"
+				SBP+="SO,1,0\n"
+				SBP+="JY," + parseFloat(0.5*sf) + "\n"
+				//console.log(SBP)
 	
-		fabmo.submitJob({
-	   	file : SBP,
-	   	filename : hershey + '.sbp',
-	   	name : 'Hershey Text',
-			description : 'cut depth = ' + cutDepth + '\"'   
-		})
-
+				fabmo.submitJob({
+	   			file : SBP,
+	   			filename : hershey + '.sbp',
+	   			name : 'Hershey Text',
+					description : 'cut depth = ' + cutDepth + '\"'   
+				})
+			}
 }
 
 function space(){

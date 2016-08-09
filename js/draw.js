@@ -28,14 +28,29 @@ var char = String.raw` 12JZRIPOJOOSMYRUWYUSZOTORI`
 
 var mode = 1 //0=type, 1=submit
 
+function modeChange(){
 
+	mode = parseInt(document.getElementById("toggle").value)
+	draw()
+
+}
 
 function draw(){
 
-	$('.trash-icon').blur()
+	document.getElementById("fontLoad").style.display="none"
 
 	if (mode==1){
+		document.getElementById("paper").style.display="block"
+		document.getElementById("submit").style.display="block"
+		document.getElementById("backspace").style.display="block"
+		$('.trash-icon').show()
 		screen()
+	}
+	else if(mode==0){
+		document.getElementById("paper").style.display="none"
+		document.getElementById("submit").style.display="none"
+		document.getElementById("backspace").style.display="none"
+		$('.trash-icon').hide()
 	}
 
 	c = document.getElementById("myCanvas")
@@ -156,7 +171,7 @@ function screen(){
 	ctx2.lineCap="round"
 	//console.log(ctx2.canvas.width)
 	x=10
-	y=34*displayScale
+	y=35*displayScale+5
 	ctx2.lineWidth=displayScale
 
 	for(i=0;i<display.length;i++){
