@@ -20,19 +20,56 @@ var display = []
 var displayScale = 1.2
 var screenY = 70*displayScale
 
+var tagCutout = []
+var tagHole = {X:34,Y:25,R:2}
+
 var cutDepth = "-0.005"
 var sf
 var line = 0
 
 var char = String.raw` 12JZRIPOJOOSMYRUWYUSZOTORI`
 
-var mode = 1 //0=type, 1=submit
+var mode = 2 //0=type, 1=submit
+
+cutOut()
+
+function cutOut(){
+
+var tagWidth = 76
+var tagHeight = 50
+var tagRadius = 5
+
+var X = ((tagWidth/2) - tagRadius) 
+var Y = ((tagHeight/2) - tagRadius)
+
+for (i=0;i<=100;i++) {
+
+	if((i>25)&&(i<50)){
+		Y = (-(tagHeight/2) + tagRadius)
+	}
+	else if((i>50)&&(i<75)){
+		X = (-(tagWidth/2) + tagRadius)
+	}
+	else if(i>75){
+		Y = ((tagHeight/2) - tagRadius)
+	}
+	
+		tagCutout.push({X:(X+Math.sin((Math.PI*2)/100*i)*tagRadius ),Y:(Y+Math.cos((Math.PI*2)/100*i)*tagRadius)})
+	
+}
+
+tagCutout.push(tagCutout[0])
+
+console.log(tagCutout)
+
+//tagCutout = [{X:-38,Y:-25},{X:38,Y:-25},{X:38,Y:25},{X:-38,Y:25},{X:-38,Y:-25}]
+
+}
+
 
 function modeChange(){
-
 	mode = parseInt(document.getElementById("toggle").value)
 	draw()
-
 }
 
 function draw(){
@@ -52,6 +89,16 @@ function draw(){
 		document.getElementById("backspace").style.display="none"
 		$('.trash-icon').hide()
 	}
+	else if(mode==2){
+		document.getElementById("paper").style.display="none"
+		//document.getElementById("submit").style.display="none"
+		//document.getElementById("backspace").style.display="none"
+		//$('.trash-icon').hide()
+		document.getElementById("size").style.display="none"
+		document.getElementById("fontSelect").style.display="none"
+		demo()
+		screenY=170
+	}
 
 	c = document.getElementById("myCanvas")
 	ctx = c.getContext("2d")
@@ -60,7 +107,7 @@ function draw(){
 
 	var ymax = Math.round((Math.ceil((path.length*70)/ctx.canvas.width )*70))
 
-	if( ($(window).innerHeight()-140) < (ymax)   ){
+	if( ($(window).innerHeight()-140) < (ymax+screenY)   ){
 		ctx.canvas.height = ymax+screenY+140
 	}
 	else{
@@ -81,6 +128,9 @@ function draw(){
 	var y = 50
 
 	if (mode==1){
+		y+=screenY+10
+	}
+	else if (mode==2){
 		y+=screenY+10
 	}
 
@@ -138,12 +188,15 @@ function draw(){
 	if (mode==1){
 		y+=screenY+10
 	}
+	else if (mode==2){
+		y+=screenY+10
+	}
 
 	for(i=0;i<path.length;i++){		
 		for(j=0;j<path[i].length;j++){
 			ctx.beginPath()
 			for(l=0;l<path[i][j].length;l++){
-				ctx.lineTo( parseFloat(x+(path[i][j][l].X)), parseFloat(y+(path[i][j][l].Y)) )
+				ctx.lineTo( parseFloat((x+(path[i][j][l].X))), parseFloat(y+(path[i][j][l].Y)) )
 			}
 			ctx.stroke()
 		}
@@ -204,16 +257,146 @@ function screen(){
 function displayTxt(g){
 
 	display.push(g)
-	//console.log(display)
-	//ctx2.clearRect(0,0,ctx2.canvas.width,ctx2.canvas.height)
 	draw()
 }
 
+function demo(){
+
+	//add circle
+	//add cutout
+	//
+	//make 3 lines of text
+	//
+	var tagScale = 3
+	//screenY = 100
+	c3 = document.getElementById("paper2")
+	ctx3 = c3.getContext("2d")
+	ctx3.canvas.width = 76*tagScale+2
+	ctx3.canvas.height = 50*tagScale+2
+
+	ctx3.strokeStyle = "#000"
+	//ctx3.fillStyle = "#eee"
+	ctx3.fillStyle = "rgba(100,100,255,0.3)"
+
+	//ctx3.beginPath()
+	//ctx3.rect(0,0,ctx3.canvas.width,ctx3.canvas.height)
+	//ctx3.fill()
+	//ctx3.stroke()
+
+	ctx3.beginPath()
+	for(i=0;i<tagCutout.length;i++){
+		ctx3.lineTo((tagCutout[i].X*tagScale+(ctx3.canvas.width/2)),tagCutout[i].Y*tagScale+(ctx3.canvas.height/2))
+	}
+	ctx3.moveTo(ctx3.canvas.width/2+36*tagScale,ctx3.canvas.height/2)
+	ctx3.arc(ctx3.canvas.width/2+tagHole.X*tagScale,tagHole.Y*tagScale,tagHole.R*tagScale,0,2*Math.PI)
+	ctx3.fill()
+	ctx3.stroke()
+
+	/*
+	ctx3.fillStyle = "#aaa"
+	ctx3.beginPath()
+	ctx3.arc(ctx3.canvas.width/2+35*tagScale,ctx3.canvas.height/2,5,0,2*Math.PI)
+	ctx3.stroke()
+	ctx3.fill()	
+	*/
+
+	ctx3.lineWidth=2
+	ctx3.strokeStyle = "#fff"
+
+	var x=ctx3.canvas.width/2-(38*tagScale)+6
+	var y=ctx3.canvas.height/2-(25*tagScale)+15
+
+	for(i=0;i<display.length;i++){
+
+		x+=(Math.abs(display[i][0][0].L))
+
+		if(display[i][0][0].N==true){
+			y+=30
+			x=ctx3.canvas.width/2-(38*tagScale)+6
+		}
+		
+		for(j=0;j<display[i].length;j++){
+			ctx3.beginPath()
+			for(l=0;l<display[i][j].length;l++){
+
+				//console.log(parseFloat((x)+(display[i][j][l].X)))
+				//console.log(parseFloat(y+(display[i][j][l].Y)))
+
+				ctx3.lineTo( parseFloat((x)+(display[i][j][l].X)), parseFloat(y+(display[i][j][l].Y)) )
+			}
+			ctx3.stroke()
+		}
+
+			x+=(display[i][0][0].R)
+	}
 
 
+	ctx3.beginPath()
+	ctx3.fillRect(x+2,y-10,3,20)
+	ctx3.fill()
+
+	//console.log(display)
+
+	//draw()
+}
+
+
+function displayTag(g){
+
+	display.push(g)
+	draw()
+}
 
 
 $(window).resize(function(){
 	draw()
 })
+
+
+function space(){
+	if(mode>=1){
+
+	var S = [[{L:-8,R:8}]]
+	displayTxt(S)
+
+	}
+	else{
+		SBP = ""
+		SBP +="JZ,0.5\n"
+		lineX += parseFloat(0.5*sf)
+		SBP +="JX," + ((lineX).toFixed(4)) + "\n"
+		fabmo.runSBP(SBP)
+	}
+}
+
+function enter(){
+	if(mode>=1){
+		screenY+=(70*displayScale)
+		//sf = document.getElementById("size").value
+		var R = [[{L:0,R:0,N:true}]]
+		if(mode==1){
+		displayTxt(R)
+		}
+		else{
+		displayTag(R)
+		}
+
+	}
+	else{
+		SBP = ""
+		SBP +="JZ,0.5\n"
+		lineY += parseFloat(sf) 
+		SBP +="J2," + (0) + "," + ((0-lineY).toFixed(4)) + "\n"
+		fabmo.runSBP(SBP)
+		lineX = 0
+	}
+}
+
+function backspace(){
+	if(mode>=1){
+		display.pop()
+		draw()
+	}
+
+}
 

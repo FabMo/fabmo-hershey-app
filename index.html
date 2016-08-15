@@ -7,10 +7,7 @@
 
 	<link href="css/style.css" rel="stylesheet">
 	<script src="js/libs/jquery.js"></script>
-	<script src="js/libs/fabmo.js"></script>
-	<script type="text/javascript">
-		var fabmo = new FabMoDashboard();
-	</script>
+	<script src="js/libs/fabmo.min.js"></script>
 	<script src="js/make.js"></script>
 	<script src="js/draw.js"></script>
 	<script src="js/loadfont.js"></script>
@@ -23,7 +20,7 @@
 		<option value='hershey/cursive.jhf'>cursive</option>
 		<option value='hershey/cyrilc_1.jhf'>cyrilc_1</option>
 		<option value='hershey/cyrillic.jhf'>cyrillic</option>
-		<option value='hershey/futural.jhf' selected>futural</option>
+		<option value='hershey/futural.jhf'>futural</option>
 		<option value='hershey/futuram.jhf'>futuram</option>
 		<option value='hershey/gothgbt.jhf'>gothgbt</option>
 		<option value='hershey/gothgrt.jhf'>gothgrt</option>
@@ -34,6 +31,7 @@
 		<option value='hershey/greek.jhf'>greek</option>
 		<option value='hershey/greekc.jhf'>greekc</option>
 		<option value='hershey/greeks.jhf'>greeks</option>
+		<option value='hershey/hershey.jhf' selected>hershey</option>
 		<option value='hershey/japanese.jhf'>japanese</option>
 		<option value='hershey/markers.jhf'>markers</option>
 		<option value='hershey/mathlow.jhf'>mathlow</option>
@@ -57,12 +55,12 @@
 	<input id="size" type="number" value="0.3" step="0.1" min="0.2">
 	<input id="space" type="submit" value="Space" onclick="space()">
 	<input id="enter" type="submit" value="&#9166;" onclick="enter()">
-	<input id="submit" type="submit" value="SUBMIT" onclick="make()">
+	<input id="submit" type="submit" value="SUBMIT&#x00A;JOB" onclick="make()">
 	<input id="backspace" type="submit" value="&#8678;" onclick="backspace()">
 
 	<select id="toggle" onchange="modeChange()" autocomplet="off">
-		<option value='1'>demo</option>
-		<option value='1' selected>string</option>
+		<option value='-1' selected>demo</option>
+		<option value='1'>string</option>
 		<option value='0'>type</option>
 	</select>	
 
@@ -71,6 +69,7 @@
 
 	<canvas id="myCanvas"></canvas>
 	<canvas id="paper"></canvas>
+	<canvas id="paper2"></canvas>
         
 	</body>
 
@@ -78,9 +77,10 @@
 
 //TODO
 //
-//return
-//mode toggle
-//submit job
+//demo mode
+//
+
+var fabmo = new FabMoDashboard();
 
 $("#myCanvas").on('mousemove', function(e) {
 	mouseX= (e.clientX-(10))
@@ -101,6 +101,9 @@ $("#myCanvas").on('mouseup', function(e) {
 	if(selected!=-1){
 		if (mode==1){
 			displayTxt(path[selected])
+		}
+		else if (mode==2){
+			displayTag(path[selected])
 		}
 		else{
 			makeSBP(path[selected])

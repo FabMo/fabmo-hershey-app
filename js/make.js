@@ -63,8 +63,6 @@
 			SBP+= "J2," + (((lineX)+(display[i][j][0].X*0.0394*sf)).toFixed(4)) + "," + ((lineY-(display[i][j][0].Y*0.0394*sf)).toFixed(4)) + "\n"
 			SBP+="MZ,"+cutDepth+"\n"
 		}
-
-			
 			for(l=1;l<display[i][j].length;l++){
 				SBP+= "M2," + (((lineX)+(display[i][j][l].X*0.0394*sf)).toFixed(4)) + "," + ((lineY-(display[i][j][l].Y*0.0394*sf)).toFixed(4)) + "\n"
 			}
@@ -88,47 +86,82 @@
 					description : 'cut depth = ' + cutDepth + '\"'   
 				})
 			}
+
+			else if(mode == 2){
+
+				scale=2
+
+				SBP+="VD,1,3,1\n"
+				SBP+="MS," + 4 + "," + 3 + "\n"
+				SBP+="JZ,5\n"
+				SBP+="SO,1,1\n"
+				SBP+="PAUSE 1\n"
+				lineY = 0
+				lineX = 4/scale
+
+			//////
+			for(i=0;i<display.length;i++){
+
+
+
+				if(display[i][0][0].N==true){
+					lineY-=10/scale
+					lineX=4/scale
+				}
+				else{
+					lineX+=(Math.abs(display[i][0][0].L/3/scale))
+				}
+			for(j=0;j<display[i].length;j++){
+				if(display[i][0][0].N!=true){
+					SBP+= "J2," + (((lineX)+(display[i][j][0].X/3/scale)).toFixed(3)) + "," + ((lineY-(display[i][j][0].Y/3/scale)).toFixed(3)) + "\n"
+					SBP+="MZ,-0.05\n"
+				}
+			for(l=0;l<display[i][j].length;l++){
+				SBP+= "M2," + (((lineX)+(display[i][j][l].X/3/scale)).toFixed(3)) + "," + ((lineY-(display[i][j][l].Y/3/scale)).toFixed(3)) + "\n"
+			}
+			SBP+="JZ,3\n"
+			}
+						
+			lineX+=(display[i][0][0].R/3/scale)			
+
+			}
+
+
+			SBP+="J2," + (72/scale) + "," + ((-20/scale)+tagHole.R/scale) + "\n"
+			for(j=1;j<5;j++){			
+				SBP+="MZ," + (-0.1*j) +"\n"
+				SBP+="CC," + tagHole.R+ "\n"
+			}
+
+			tagCutout.reverse()
+
+			SBP+="JZ,3\n"
+			SBP+="J2," + (((tagCutout[0].X+38)/scale).toFixed(3)) + "," + (((tagCutout[0].Y-20)/scale).toFixed(3)) + "\n"
+
+			for(j=1;j<5;j++){			
+			SBP+="MZ," + (-0.1*j) +"\n"
+
+			for(i=1;i<tagCutout.length;i++){
+				SBP+="M2," + (((tagCutout[i].X+38)/scale).toFixed(3)) + "," + (((tagCutout[i].Y-20)/scale).toFixed(3)) + "\n"
+			}
+
+			}
+
+			tagCutout.reverse()
+
+				SBP+="JZ,5\n"
+				SBP+="SO,1,0\n"
+				SBP+="'END\n"
+
+			fabmo.submitJob({
+	   		file : SBP,
+	   		filename : 'tag.sbp',
+	   		name : 'tag',
+				description : 'cut depth = ' + cutDepth + '\"'   
+			})
+
+			}
 }
 
-function space(){
-	if(mode==1){
 
-	var S = [[{L:-8,R:8}]]
-	displayTxt(S)
-
-	}
-	else{
-		SBP = ""
-		SBP +="JZ,0.5\n"
-		lineX += parseFloat(0.5*sf)
-		SBP +="JX," + ((lineX).toFixed(4)) + "\n"
-		fabmo.runSBP(SBP)
-	}
-}
-
-function enter(){
-	if(mode==1){
-		screenY+=(70*displayScale)
-		//sf = document.getElementById("size").value
-		var R = [[{L:0,R:0,N:true}]]
-		displayTxt(R)
-
-	}
-	else{
-		SBP = ""
-		SBP +="JZ,0.5\n"
-		lineY += parseFloat(sf) 
-		SBP +="J2," + (0) + "," + ((0-lineY).toFixed(4)) + "\n"
-		fabmo.runSBP(SBP)
-		lineX = 0
-	}
-}
-
-function backspace(){
-	if(mode==1){
-		display.pop()
-		draw()
-	}
-
-}
 

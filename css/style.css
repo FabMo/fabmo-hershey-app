@@ -7,6 +7,16 @@
 	left: 20px;
 }
 
+#paper2{
+	position: fixed;
+	/*background:#00ff00;*/
+	top: 110px;
+	left: 50%;
+	margin-right: -50%;
+	transform: translate(-50%, -50%)
+
+}
+
 body{
 	background:#eee;
 	}
@@ -69,6 +79,7 @@ body{
 	border-radius: 10px;
 	padding-left:10px;
 	padding-right:10px;
+	display:none;
 	}
 
 #toggle:hover {
@@ -97,9 +108,9 @@ body{
 #enter{
 	position: fixed;
 	right: 10px;
-	bottom: 50%;
+	bottom: 250px;
 	height:70px;
-	width:60px;
+	width:85px;
    border-radius: 10px;
 	background-color: #ddd;
 	border: solid 2px #eee;
@@ -116,8 +127,8 @@ body{
 #submit{
 	position: fixed;
 	right: 10px;
-	top: 75px;
-	height:35px;
+	bottom: 100px;
+	height:80px;
 	background-color: #ddd;
    border-radius: 10px;
 	border: solid 2px #eee;
@@ -159,3 +170,8 @@ body{
 	padding-left: 1em;
 	padding-bottom: 1em;
 	}
+
+.trash-icon:hover{
+	color:red
+	}
+
