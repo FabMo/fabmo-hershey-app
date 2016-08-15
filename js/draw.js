@@ -62,7 +62,6 @@ tagCutout.push(tagCutout[0])
 
 console.log(tagCutout)
 
-//tagCutout = [{X:-38,Y:-25},{X:38,Y:-25},{X:38,Y:25},{X:-38,Y:25},{X:-38,Y:-25}]
 
 }
 
@@ -95,7 +94,7 @@ function draw(){
 		//document.getElementById("backspace").style.display="none"
 		//$('.trash-icon').hide()
 		document.getElementById("size").style.display="none"
-		document.getElementById("fontSelect").style.display="none"
+		//document.getElementById("fontSelect").style.display="none"
 		demo()
 		screenY=170
 	}

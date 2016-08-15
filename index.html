@@ -15,7 +15,7 @@
 
 	<body onload="makeChar(); draw(); fontChange();">
 
-	<select id="fontSelect" onchange="fontChange()" autocomplet="on">
+	<select id="fontSelect" onchange="fontChange()" autocomplet="off">
 		<option value='hershey/astrology.jhf'>astrology</option>
 		<option value='hershey/cursive.jhf'>cursive</option>
 		<option value='hershey/cyrilc_1.jhf'>cyrilc_1</option>
@@ -31,12 +31,13 @@
 		<option value='hershey/greek.jhf'>greek</option>
 		<option value='hershey/greekc.jhf'>greekc</option>
 		<option value='hershey/greeks.jhf'>greeks</option>
-		<option value='hershey/hershey.jhf' selected>hershey</option>
+		<option value='hershey/hershey.jhf'>hershey</option>
 		<option value='hershey/japanese.jhf'>japanese</option>
 		<option value='hershey/markers.jhf'>markers</option>
 		<option value='hershey/mathlow.jhf'>mathlow</option>
 		<option value='hershey/mathupp.jhf'>mathupp</option>
 		<option value='hershey/meteorology.jhf'>meteorology</option>
+		<option value='hershey/minimal.jhf' selected>minimal</option>
 		<option value='hershey/music.jhf'>music</option>
 		<option value='hershey/rowmand.jhf'>rowmand</option>
 		<option value='hershey/rowmans.jhf'>rowmans</option>
@@ -77,7 +78,7 @@
 
 //TODO
 //
-//demo mode
+//mode toggle
 //
 
 var fabmo = new FabMoDashboard();
