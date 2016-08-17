@@ -22,8 +22,9 @@ var screenY = 70*displayScale
 
 var tagCutout = []
 var tagHole = {X:34,Y:25,R:2}
+var toolRad = 8
 
-var cutDepth = "-0.005"
+var cutDepth = 0
 var sf
 var line = 0
 
@@ -35,26 +36,26 @@ cutOut()
 
 function cutOut(){
 
-var tagWidth = 76
-var tagHeight = 50
-var tagRadius = 5
+var tagWidth = 80+toolRad
+var tagHeight = 50+toolRad
+var tagRadius = 10
 
-var X = ((tagWidth/2) - tagRadius) 
-var Y = ((tagHeight/2) - tagRadius)
+var X = ((tagWidth/2) - (tagRadius)) 
+var Y = ((tagHeight/2) - (tagRadius))
 
 for (i=0;i<=100;i++) {
 
 	if((i>25)&&(i<50)){
-		Y = (-(tagHeight/2) + tagRadius)
+		Y = (-(tagHeight/2) + (tagRadius))
 	}
 	else if((i>50)&&(i<75)){
-		X = (-(tagWidth/2) + tagRadius)
+		X = (-(tagWidth/2) + (tagRadius))
 	}
 	else if(i>75){
-		Y = ((tagHeight/2) - tagRadius)
+		Y = ((tagHeight/2) - (tagRadius))
 	}
 	
-		tagCutout.push({X:(X+Math.sin((Math.PI*2)/100*i)*tagRadius ),Y:(Y+Math.cos((Math.PI*2)/100*i)*tagRadius)})
+		tagCutout.push({X:(X+Math.sin((Math.PI*2)/100*i)*(tagRadius) ),Y:(Y+Math.cos((Math.PI*2)/100*i)*(tagRadius))})
 	
 }
 
@@ -261,48 +262,29 @@ function displayTxt(g){
 
 function demo(){
 
-	//add circle
-	//add cutout
-	//
-	//make 3 lines of text
-	//
 	var tagScale = 3
-	//screenY = 100
 	c3 = document.getElementById("paper2")
 	ctx3 = c3.getContext("2d")
-	ctx3.canvas.width = 76*tagScale+2
-	ctx3.canvas.height = 50*tagScale+2
+	ctx3.canvas.width = 80*tagScale+2+(toolRad*tagScale)
+	ctx3.canvas.height = 50*tagScale+2+(toolRad*tagScale)
 
 	ctx3.strokeStyle = "#000"
-	//ctx3.fillStyle = "#eee"
 	ctx3.fillStyle = "rgba(100,100,255,0.3)"
 
-	//ctx3.beginPath()
-	//ctx3.rect(0,0,ctx3.canvas.width,ctx3.canvas.height)
-	//ctx3.fill()
-	//ctx3.stroke()
 
 	ctx3.beginPath()
 	for(i=0;i<tagCutout.length;i++){
 		ctx3.lineTo((tagCutout[i].X*tagScale+(ctx3.canvas.width/2)),tagCutout[i].Y*tagScale+(ctx3.canvas.height/2))
 	}
 	ctx3.moveTo(ctx3.canvas.width/2+36*tagScale,ctx3.canvas.height/2)
-	ctx3.arc(ctx3.canvas.width/2+tagHole.X*tagScale,tagHole.Y*tagScale,tagHole.R*tagScale,0,2*Math.PI)
+	ctx3.arc(ctx3.canvas.width/2+tagHole.X*tagScale,(tagHole.Y+4)*tagScale,tagHole.R*tagScale,0,2*Math.PI)
 	ctx3.fill()
 	ctx3.stroke()
-
-	/*
-	ctx3.fillStyle = "#aaa"
-	ctx3.beginPath()
-	ctx3.arc(ctx3.canvas.width/2+35*tagScale,ctx3.canvas.height/2,5,0,2*Math.PI)
-	ctx3.stroke()
-	ctx3.fill()	
-	*/
 
 	ctx3.lineWidth=2
 	ctx3.strokeStyle = "#fff"
 
-	var x=ctx3.canvas.width/2-(38*tagScale)+6
+	var x=ctx3.canvas.width/2-(38*tagScale)+0
 	var y=ctx3.canvas.height/2-(25*tagScale)+15
 
 	for(i=0;i<display.length;i++){
@@ -311,16 +293,12 @@ function demo(){
 
 		if(display[i][0][0].N==true){
 			y+=30
-			x=ctx3.canvas.width/2-(38*tagScale)+6
+			x=ctx3.canvas.width/2-(38*tagScale)+0
 		}
 		
 		for(j=0;j<display[i].length;j++){
 			ctx3.beginPath()
 			for(l=0;l<display[i][j].length;l++){
-
-				//console.log(parseFloat((x)+(display[i][j][l].X)))
-				//console.log(parseFloat(y+(display[i][j][l].Y)))
-
 				ctx3.lineTo( parseFloat((x)+(display[i][j][l].X)), parseFloat(y+(display[i][j][l].Y)) )
 			}
 			ctx3.stroke()
@@ -334,9 +312,6 @@ function demo(){
 	ctx3.fillRect(x+2,y-10,3,20)
 	ctx3.fill()
 
-	//console.log(display)
-
-	//draw()
 }
 
 

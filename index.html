@@ -119,6 +119,53 @@ $('.trash-icon').click(function(){
 	draw()
 })
 
+$(document).keydown(function(e){
+	e.preventDefault()
+
+	if(document.getElementById("fontSelect").value=='hershey/minimal.jhf'){
+		if((e.which >= 65)&&(e.which <= 90)&&(e.shiftKey)){
+			displayTag(path[((e.which-65)*2)])
+		}
+		else if((e.which >= 65)&&(e.which <= 90)){
+			displayTag(path[(((e.which-65)*2)+1)])			
+		}
+		else if((e.which >= 48)&&(e.which <= 57)){
+			if((e.which===50)&&(e.shiftKey)){
+				displayTag(path[62])				
+			}
+			else{
+				displayTag(path[(e.which-48)+52])
+			}					
+		}
+		else if(e.which === 13){
+			enter()			
+		}
+		else if(e.which === 8){
+			backspace()			
+		}
+		else if(e.which === 32){
+			space()			
+		}
+		else if(e.which === 46){
+			display = []
+			draw()			
+		}
+		else if(e.which === 190){
+			displayTag(path[66])			
+		}
+		else if(e.which === 191){
+			displayTag(path[63])			
+		}
+		else if(e.which === 173){
+			displayTag(path[64])			
+		}
+		else if(e.which === 188){
+			displayTag(path[65])			
+		}
+	}
+
+})
+
 </script>
 
 </html>

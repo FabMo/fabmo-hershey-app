@@ -7,7 +7,6 @@
 
 			sf = document.getElementById("size").value
 			
-
 			hershey = hershey.replace('hershey/','')
 			hershey = hershey.replace('.jhf','')
 	
@@ -89,24 +88,23 @@
 
 			else if(mode == 2){
 
-				scale=2
+				scale=3
+				cutDepth=-0.025
 
 				SBP+="VD,1,3,1\n"
-				SBP+="MS," + 4 + "," + 3 + "\n"
-				SBP+="JZ,5\n"
+				SBP+="MS," + 3 + "," + 3 + "\n"
+				SBP+="JZ,3\n"
 				SBP+="SO,1,1\n"
 				SBP+="PAUSE 1\n"
 				lineY = 0
-				lineX = 4/scale
+				lineX = 0
 
-			//////
+			//
 			for(i=0;i<display.length;i++){
-
-
 
 				if(display[i][0][0].N==true){
 					lineY-=10/scale
-					lineX=4/scale
+					lineX=0
 				}
 				else{
 					lineX+=(Math.abs(display[i][0][0].L/3/scale))
@@ -114,12 +112,12 @@
 			for(j=0;j<display[i].length;j++){
 				if(display[i][0][0].N!=true){
 					SBP+= "J2," + (((lineX)+(display[i][j][0].X/3/scale)).toFixed(3)) + "," + ((lineY-(display[i][j][0].Y/3/scale)).toFixed(3)) + "\n"
-					SBP+="MZ,-0.05\n"
+					SBP+="MZ," + cutDepth + "\n"
 				}
 			for(l=0;l<display[i][j].length;l++){
 				SBP+= "M2," + (((lineX)+(display[i][j][l].X/3/scale)).toFixed(3)) + "," + ((lineY-(display[i][j][l].Y/3/scale)).toFixed(3)) + "\n"
 			}
-			SBP+="JZ,3\n"
+			SBP+="JZ,1\n"
 			}
 						
 			lineX+=(display[i][0][0].R/3/scale)			
@@ -127,19 +125,22 @@
 			}
 
 
+			var passDepth = -0.025
+			var pass=16
+
 			SBP+="J2," + (72/scale) + "," + ((-20/scale)+tagHole.R/scale) + "\n"
-			for(j=1;j<5;j++){			
-				SBP+="MZ," + (-0.1*j) +"\n"
-				SBP+="CC," + tagHole.R+ "\n"
+			for(j=1;j<pass;j++){			
+				SBP+="MZ," + (passDepth*j) +"\n"
+				SBP+="CC," + tagHole.R + "\n"
 			}
 
 			tagCutout.reverse()
 
-			SBP+="JZ,3\n"
+			SBP+="JZ,1\n"
 			SBP+="J2," + (((tagCutout[0].X+38)/scale).toFixed(3)) + "," + (((tagCutout[0].Y-20)/scale).toFixed(3)) + "\n"
 
-			for(j=1;j<5;j++){			
-			SBP+="MZ," + (-0.1*j) +"\n"
+			for(j=1;j<pass;j++){			
+			SBP+="MZ," + (passDepth*j) +"\n"
 
 			for(i=1;i<tagCutout.length;i++){
 				SBP+="M2," + (((tagCutout[i].X+38)/scale).toFixed(3)) + "," + (((tagCutout[i].Y-20)/scale).toFixed(3)) + "\n"
@@ -148,7 +149,7 @@
 			}
 
 			tagCutout.reverse()
-
+			
 				SBP+="JZ,5\n"
 				SBP+="SO,1,0\n"
 				SBP+="'END\n"
